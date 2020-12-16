@@ -1,24 +1,20 @@
 
-.SECONDEXPANSION:
-
-.PRECIOUS: %.png %.pdf
-
 .PHONY:	clean all pdf png
 
 all: pdf png
 
-pdf: aist-ponti.pdf
+pdf: $(patsubst %.svg, %.pdf, $(wildcard *.svg))
 
-png: aist-ponti1.png aist-ponti2.png
+png: $(patsubst %.svg, %.png, $(wildcard *.svg))
 
 aist-ponti.pdf: aist-ponti1.pdf aist-ponti2.pdf
 	pdftk aist-ponti2.pdf aist-ponti1.pdf cat output $@
 
 %.pdf : %.svg
-	inkscape -f $< -A $*.pdf -d 50
+	inkscape -f $(CURDIR)/$< -A $(CURDIR)/$*.pdf -d 150 || inkscape -o $(CURDIR)/$*.pdf -d 150 $(CURDIR)/$<
 
 %.png : %.svg
-	inkscape -f $< -e $*.png -d 150 -b=FFFFFF -y=0.9
+	inkscape -f $(CURDIR)/$< -e $(CURDIR)/$*.png -d 150 -b=FFFFFF -y=0.9 || inkscape -o $(CURDIR)/$*.png -d 150 $(CURDIR)/$<
 
 clean:
 	-rm *.png *.pdf
